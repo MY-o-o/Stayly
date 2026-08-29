@@ -11,8 +11,9 @@ build/
 # Next.js production
 .vercel/
 
-# npm
+# npm / pnpm
 .npm/
+.pnpm-store/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
