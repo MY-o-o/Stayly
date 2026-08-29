@@ -11,4 +11,20 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<User> Users => Set<User>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.Property(e => e.Email)
+                  .HasMaxLength(255)
+                  .IsRequired();
+
+            entity.HasIndex(e => e.Email)
+                  .IsUnique();
+
+            entity.Property(e => e.Name)
+                  .HasMaxLength(100);
+        });
+    }
 }
