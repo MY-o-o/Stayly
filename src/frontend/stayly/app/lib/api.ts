@@ -2,7 +2,7 @@ export interface User {
   id: number | string;
   email: string;
   name: string;
-  role: string;
+  role: "User" | "Admin" | string;
 }
 
 export interface AuthResponse {
@@ -27,8 +27,25 @@ export interface RegisterRequest {
   name: string;
 }
 
-export interface Accommodation { id: number; ownerId: number; title: string; description: string; price: number; location: string; imageUrl: string; status: "Pending" | "Approved" | "Rejected" | string; createdAt: string; }
-export interface CreateAccommodationRequest { title: string; description: string; location: string; price: number; imageUrl: string; }
+export interface Accommodation { 
+  id: number; 
+  ownerId: number; 
+  title: string; 
+  description: string; 
+  price: number; 
+  location: string; 
+  imageUrl: string; 
+  status: "Pending" | "Approved" | "Rejected" | string; 
+  createdAt: string; 
+}
+
+export interface CreateAccommodationRequest { 
+  title: string; 
+  description: string; 
+  location: string; 
+  price: number; 
+  imageUrl: string; 
+}
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const TOKEN_KEY = "stayly_jwt_token";
