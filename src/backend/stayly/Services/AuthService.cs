@@ -38,6 +38,7 @@ public class AuthService
             Name = request.Name.Trim(),
             Email = email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            Role = "User",
             CreatedAt = DateTime.UtcNow
         };
 
@@ -48,7 +49,15 @@ public class AuthService
         return true;
     }
 
-    public async Task<string?> LoginAsync(LoginRequest request)
+    public async Task<Models.User?> GetUserByEmailAsync(string email)
+    {
+        var normalizedEmail = email.Trim().ToLowerInvariant();
+
+        return await _dbContext.Users
+            .FirstOrDefaultAsync(u => u.Email == normalizedEmail);
+    }
+
+    public async Task<(string Token, Models.User User)?> LoginAsync(LoginRequest request)
     {
         var email = request.Email.Trim().ToLowerInvariant();
 
@@ -69,7 +78,9 @@ public class AuthService
             return null;
         }
 
-        return GenerateJwtToken(user);
+        var token = GenerateJwtToken(user);
+
+        return (token, user);
     }
 
     private string GenerateJwtToken(Models.User user)
@@ -90,7 +101,8 @@ public class AuthService
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.Name)
+            new Claim(ClaimTypes.Name, user.Name),
+            new Claim(ClaimTypes.Role, user.Role)
         };
 
         var credentials = new SigningCredentials(

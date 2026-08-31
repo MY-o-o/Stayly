@@ -12,6 +12,8 @@ public class AppDbContext : DbContext
 
     public DbSet<User> Users => Set<User>();
 
+    public DbSet<Accommodation> Accommodations => Set<Accommodation>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>(entity =>
@@ -25,6 +27,10 @@ public class AppDbContext : DbContext
 
             entity.Property(e => e.Name)
                   .HasMaxLength(100);
+
+            entity.Property(e => e.Role)
+                  .HasMaxLength(20)
+                  .IsRequired();
         });
     }
 }
