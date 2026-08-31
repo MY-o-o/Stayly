@@ -51,6 +51,7 @@ export function Header() {
           <a className="hover:text-[#ff385c]" href="#online">Online Experiences</a>
         </nav>
         <div className="flex items-center gap-2">
+          {isAuthenticated && user && <span className="hidden text-sm font-semibold text-stone-700 dark:text-stone-200 sm:inline">Hi, {user.name}</span>}
           <button aria-label="Toggle dark mode" onClick={toggleTheme} className="grid size-10 place-items-center rounded-full transition hover:bg-stone-100 dark:hover:bg-white/10">
             <Icon name={dark ? "sun" : "moon"} className="size-4" />
           </button>
@@ -82,6 +83,9 @@ export function Header() {
                       <p className="truncate text-xs text-stone-500">{user.email}</p>
                     </div>
                     <div className="py-1">
+                      <Link href="/add-accommodation" onClick={() => setMenuOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 transition hover:bg-stone-50 dark:text-stone-300 dark:hover:bg-white/5">Add accommodation</Link>
+                      <Link href="/my-accommodations" onClick={() => setMenuOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 transition hover:bg-stone-50 dark:text-stone-300 dark:hover:bg-white/5">My accommodations</Link>
+                      {user.role.toLowerCase() === "admin" && <Link href="/admin/accommodations" onClick={() => setMenuOpen(false)} className="block px-4 py-2.5 text-sm font-semibold text-[#ff385c] transition hover:bg-red-50 dark:hover:bg-red-950/20">Admin Panel</Link>}
                       <a
                         href="#stays"
                         onClick={() => setMenuOpen(false)}
