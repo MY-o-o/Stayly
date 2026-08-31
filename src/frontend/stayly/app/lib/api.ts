@@ -2,6 +2,7 @@ export interface User {
   id: number | string;
   email: string;
   name: string;
+  role: string;
 }
 
 export interface AuthResponse {
@@ -12,6 +13,7 @@ export interface AuthResponse {
   accessToken?: string;
   user?: User;
   message?: string;
+  role?: string;
 }
 
 export interface LoginRequest {
@@ -147,9 +149,10 @@ export async function loginApi(credentials: LoginRequest): Promise<{ user: User;
   }
 
   const user: User = data.user || {
-    id: data.id ?? 1,
+    id: data.id ?? 0,
     email: data.email ?? credentials.email,
     name: data.name ?? credentials.email.split("@")[0],
+    role: data.role ?? "User"
   };
 
   return { user, token };
@@ -167,15 +170,17 @@ export async function registerApi(credentials: RegisterRequest): Promise<{ user:
   }
 
   const user: User = data.user || {
-    id: data.id ?? 1,
+    id: data.id ?? 0,
     email: data.email ?? credentials.email,
     name: data.name ?? credentials.name,
+    role: data.role ?? "User"
   };
 
   return { user, token };
 }
 
 export async function getMeApi(): Promise<User> {
+  //NOT IMPLEMENTED ON BACKEND
   const data = await request<AuthResponse>("/api/auth/me", {
     method: "GET",
   });
@@ -183,9 +188,10 @@ export async function getMeApi(): Promise<User> {
   if (data.user) return data.user;
 
   return {
-    id: data.id ?? 1,
+    id: data.id ?? 0,
     email: data.email ?? "",
     name: data.name ?? "",
+    role: data.role ?? "",
   };
 }
 
