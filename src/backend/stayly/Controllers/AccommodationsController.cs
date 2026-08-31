@@ -59,6 +59,21 @@ public class AccommodationsController : ControllerBase
             });
         }
 
+        if (accommodation.Status == "Pending")
+        {
+            var userId = GetUserId();
+
+            if (userId is null)
+            {
+                return Unauthorized();
+            }
+
+            if (accommodation.OwnerId != userId)
+            {
+                return Unauthorized();
+            }
+        }
+
         return Ok(accommodation);
     }
 
