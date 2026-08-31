@@ -172,11 +172,12 @@ export async function loginApi(credentials: LoginRequest): Promise<{ user: User;
     setStoredToken(token);
   }
 
-  const user: User = data.user || {
-    id: data.id ?? 0,
-    email: data.email ?? credentials.email,
-    name: data.name ?? credentials.email.split("@")[0],
-    role: data.role ?? "User"
+  const rawUser = (data.user || {}) as Partial<User>;
+  const user: User = {
+    id: rawUser.id ?? data.id ?? 0,
+    email: rawUser.email ?? data.email ?? credentials.email,
+    name: rawUser.name ?? data.name ?? credentials.email.split("@")[0],
+    role: rawUser.role ?? data.role ?? "User"
   };
 
   setStoredUser(user);
