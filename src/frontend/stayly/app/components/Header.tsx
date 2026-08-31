@@ -83,16 +83,9 @@ export function Header() {
                       <p className="truncate text-xs text-stone-500">{user.email}</p>
                     </div>
                     <div className="py-1">
-                      <Link href="/add-accommodation" onClick={() => setMenuOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 transition hover:bg-stone-50 dark:text-stone-300 dark:hover:bg-white/5">Add accommodation</Link>
-                      <Link href="/my-accommodations" onClick={() => setMenuOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 transition hover:bg-stone-50 dark:text-stone-300 dark:hover:bg-white/5">My accommodations</Link>
-                      {user.role.toLowerCase() === "admin" && <Link href="/admin/accommodations" onClick={() => setMenuOpen(false)} className="block px-4 py-2.5 text-sm font-semibold text-[#ff385c] transition hover:bg-red-50 dark:hover:bg-red-950/20">Admin Panel</Link>}
-                      <a
-                        href="#stays"
-                        onClick={() => setMenuOpen(false)}
-                        className="block px-4 py-2.5 text-sm text-stone-700 transition hover:bg-stone-50 dark:text-stone-300 dark:hover:bg-white/5"
-                      >
-                        Explore Stays
-                      </a>
+                      {user.role.toLowerCase() === "user" && <Link href="/add-accommodation" onClick={() => setMenuOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 transition hover:bg-stone-50 dark:text-stone-300 dark:hover:bg-white/5">Add accommodation</Link>}
+                      {user.role.toLowerCase() === "user" && <Link href="/my-accommodations" onClick={() => setMenuOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 transition hover:bg-stone-50 dark:text-stone-300 dark:hover:bg-white/5">My accommodations</Link>}
+                      {user.role.toLowerCase() === "admin" && <Link href="/api/admin/accommodations/pending" onClick={() => setMenuOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 transition hover:bg-stone-50 dark:text-stone-300 dark:hover:bg-white/5">Admin Panel</Link>}
                       <button
                         onClick={handleLogout}
                         className="block w-full px-4 py-2.5 text-left text-sm font-semibold text-[#ff385c] transition hover:bg-red-50 dark:hover:bg-red-950/20"
