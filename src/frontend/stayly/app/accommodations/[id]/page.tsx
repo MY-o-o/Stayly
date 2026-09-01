@@ -110,7 +110,9 @@ export default function AccommodationDetailsPage({
                     {accommodation.location}
                   </span>
                   <span>•</span>
-                  <span className="text-emerald-600 font-semibold dark:text-emerald-400">Approved Listing</span>
+                  {accommodation.status == "Approved" && <span className="text-emerald-600 font-semibold dark:text-emerald-400">Approved Listing</span>}
+                  {accommodation.status == "Pending" && <span className="text-amber-600 font-semibold dark:text-amber-400">Pending Listing</span>}
+                  {accommodation.status == "Rejected" && <span className="text-red-600 font-semibold dark:text-red-400">Rejected Listing</span>}
                 </div>
               </div>
 
