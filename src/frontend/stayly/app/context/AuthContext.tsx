@@ -10,7 +10,9 @@ import {
   getMeApi,
   logoutApi,
   getStoredToken,
+  getStoredUser,
   clearStoredToken,
+  clearStoredUser,
 } from "../lib/api";
 
 interface AuthContextType {
@@ -44,7 +46,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setToken(existingToken);
       }
 
-      try {
+      const storedUser = getStoredUser();
+      if (existingToken && storedUser && isMounted) {
+        setUser(storedUser);
+      } else if (existingToken) try {
         const currentUser = await getMeApi();
         if (isMounted) {
           setUser(currentUser);
@@ -54,11 +59,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(null);
           setToken(null);
           clearStoredToken();
+          clearStoredUser();
         }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+      }
+
+      if (isMounted) {
+        setIsLoading(false);
       }
     }
 
@@ -113,6 +119,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       setToken(null);
       clearStoredToken();
+      clearStoredUser();
       setIsLoading(false);
     }
   };

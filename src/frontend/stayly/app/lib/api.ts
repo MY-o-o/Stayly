@@ -2,6 +2,7 @@ export interface User {
   id: number | string;
   email: string;
   name: string;
+  role: "User" | "Admin" | string;
 }
 
 export interface AuthResponse {
@@ -12,6 +13,7 @@ export interface AuthResponse {
   accessToken?: string;
   user?: User;
   message?: string;
+  role?: string;
 }
 
 export interface LoginRequest {
@@ -25,8 +27,29 @@ export interface RegisterRequest {
   name: string;
 }
 
+export interface Accommodation { 
+  id: number; 
+  ownerId: number; 
+  title: string; 
+  description: string; 
+  price: number; 
+  location: string; 
+  imageUrl: string; 
+  status: "Pending" | "Approved" | "Rejected" | string; 
+  createdAt: string; 
+}
+
+export interface CreateAccommodationRequest { 
+  title: string; 
+  description: string; 
+  location: string; 
+  price: number; 
+  imageUrl: string; 
+}
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const TOKEN_KEY = "stayly_jwt_token";
+const USER_KEY = "stayly_user";
 
 export function getStoredToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -50,6 +73,9 @@ export function clearStoredToken(): void {
     localStorage.removeItem(TOKEN_KEY);
   } catch {}
 }
+export function getStoredUser(): User | null { if (typeof window === "undefined") return null; try { const value = localStorage.getItem(USER_KEY); return value ? JSON.parse(value) as User : null; } catch { return null; } }
+export function setStoredUser(user: User): void { if (typeof window !== "undefined") try { localStorage.setItem(USER_KEY, JSON.stringify(user)); } catch {} }
+export function clearStoredUser(): void { if (typeof window !== "undefined") try { localStorage.removeItem(USER_KEY); } catch {} }
 
 export class ApiError extends Error {
   status: number;
@@ -146,11 +172,15 @@ export async function loginApi(credentials: LoginRequest): Promise<{ user: User;
     setStoredToken(token);
   }
 
-  const user: User = data.user || {
-    id: data.id ?? 1,
-    email: data.email ?? credentials.email,
-    name: data.name ?? credentials.email.split("@")[0],
+  const rawUser = (data.user || {}) as Partial<User>;
+  const user: User = {
+    id: rawUser.id ?? data.id ?? 0,
+    email: rawUser.email ?? data.email ?? credentials.email,
+    name: rawUser.name ?? data.name ?? credentials.email.split("@")[0],
+    role: rawUser.role ?? data.role ?? "User"
   };
+
+  setStoredUser(user);
 
   return { user, token };
 }
@@ -167,15 +197,19 @@ export async function registerApi(credentials: RegisterRequest): Promise<{ user:
   }
 
   const user: User = data.user || {
-    id: data.id ?? 1,
+    id: data.id ?? 0,
     email: data.email ?? credentials.email,
     name: data.name ?? credentials.name,
+    role: data.role ?? "User"
   };
+
+  setStoredUser(user);
 
   return { user, token };
 }
 
 export async function getMeApi(): Promise<User> {
+  //NOT IMPLEMENTED ON BACKEND
   const data = await request<AuthResponse>("/api/auth/me", {
     method: "GET",
   });
@@ -183,9 +217,10 @@ export async function getMeApi(): Promise<User> {
   if (data.user) return data.user;
 
   return {
-    id: data.id ?? 1,
+    id: data.id ?? 0,
     email: data.email ?? "",
     name: data.name ?? "",
+    role: data.role ?? "",
   };
 }
 
@@ -198,5 +233,14 @@ export async function logoutApi(): Promise<void> {
     // Even if backend fails or is unreachable, clear client token
   } finally {
     clearStoredToken();
+    clearStoredUser();
   }
 }
+
+export const getAccommodations = () => request<Accommodation[]>("/api/accommodations");
+export const getAccommodation = (id: string | number) => request<Accommodation>(`/api/accommodations/${id}`);
+export const createAccommodation = (data: CreateAccommodationRequest) => request<Accommodation>("/api/accommodations", { method: "POST", body: JSON.stringify(data) });
+export const getMyAccommodations = () => request<Accommodation[]>("/api/accommodations/my");
+export const getPendingAccommodations = () => request<Accommodation[]>("/api/admin/accommodations/pending");
+export const approveAccommodation = (id: number) => request<Accommodation>(`/api/admin/accommodations/${id}/approve`, { method: "PATCH" });
+export const rejectAccommodation = (id: number) => request<Accommodation>(`/api/admin/accommodations/${id}/reject`, { method: "PATCH" });

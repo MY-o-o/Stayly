@@ -11,10 +11,12 @@ namespace stayly.Controllers;
 public class AccommodationsController : ControllerBase
 {
     private readonly AccommodationService _accommodationService;
+    private readonly UserService _userService;
 
-    public AccommodationsController(AccommodationService accommodationService)
+    public AccommodationsController(AccommodationService accommodationService, UserService userService)
     {
         _accommodationService = accommodationService;
+        _userService = userService;
     }
 
     [Authorize]
@@ -59,7 +61,7 @@ public class AccommodationsController : ControllerBase
             });
         }
 
-        if (accommodation.Status == "Pending")
+        if (accommodation.Status != "Approved")
         {
             var userId = GetUserId();
 
@@ -68,9 +70,9 @@ public class AccommodationsController : ControllerBase
                 return Unauthorized();
             }
 
-            if (accommodation.OwnerId != userId)
+            if (accommodation.OwnerId != userId && !_userService.IsAdmin(userId ?? 0))
             {
-                return Unauthorized();
+                return Unauthorized(new { message = "Not enough permission" });
             }
         }
 
