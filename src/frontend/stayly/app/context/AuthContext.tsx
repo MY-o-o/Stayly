@@ -61,10 +61,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           clearStoredToken();
           clearStoredUser();
         }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+      }
+
+      if (isMounted) {
+        setIsLoading(false);
       }
     }
 
