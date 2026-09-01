@@ -9,7 +9,7 @@ public class AccommodationService
 {
     private readonly AppDbContext _dbContext;
 
-public AccommodationService(AppDbContext dbContext)
+    public AccommodationService(AppDbContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -59,7 +59,7 @@ public AccommodationService(AppDbContext dbContext)
     public async Task<AccommodationResponse?> GetByIdAsync(int id)
     {
         return await _dbContext.Accommodations
-            .Where(a => a.Id == id && a.Status == "Approved")
+            .Where(a => a.Id == id)
             .Select(a => new AccommodationResponse
             {
                 Id = a.Id,
