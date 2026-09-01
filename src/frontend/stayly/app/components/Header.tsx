@@ -6,7 +6,6 @@ import { Icon } from "./Icon";
 import { SearchBar } from "./SearchBar";
 import { useScrollDirection } from "../hooks/useScrollDirection";
 import { useAuth } from "../context/AuthContext";
-import { useTheme } from "../context/ThemeContext";
 
 export function Header() {
   const isScrolled = useScrollDirection();
@@ -14,7 +13,6 @@ export function Header() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   const { user, isAuthenticated, logout } = useAuth();
-  const { isDark, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -73,20 +71,6 @@ export function Header() {
             </span>
           )}
 
-          {/* Light / Dark Theme Switch Button */}
-          <button
-            type="button"
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
-            onClick={toggleTheme}
-            className="relative grid size-10 place-items-center rounded-full text-stone-700 transition hover:bg-stone-100 dark:text-stone-200 dark:hover:bg-white/10"
-          >
-            <Icon
-              name={isDark ? "sun" : "moon"}
-              className="size-5 transition-transform duration-300 hover:rotate-12"
-            />
-          </button>
-
           <button
             aria-label="Choose language and region"
             className="hidden size-10 place-items-center rounded-full text-stone-700 transition hover:bg-stone-100 sm:grid dark:text-stone-200 dark:hover:bg-white/10"
@@ -126,6 +110,7 @@ export function Header() {
                       {user.role.toLowerCase() === "user" && <Link href="/my-accommodations" onClick={() => setMenuOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 transition hover:bg-stone-50 dark:text-stone-300 dark:hover:bg-white/5">My accommodations</Link>}
                       {user.role.toLowerCase() === "admin" && <Link href="/admin/accommodations" onClick={() => setMenuOpen(false)} className="block px-4 py-2.5 text-sm text-stone-700 transition hover:bg-stone-50 dark:text-stone-300 dark:hover:bg-white/5">Admin Panel</Link>}
                       <button
+                        type="button"
                         onClick={handleLogout}
                         className="block w-full px-4 py-2.5 text-left text-sm font-semibold text-[#ff385c] transition hover:bg-red-50 dark:hover:bg-red-950/20"
                       >
@@ -151,21 +136,8 @@ export function Header() {
                         Log in
                       </Link>
                     </div>
-                    <div className="my-1 border-t border-stone-100 dark:border-white/10" />
-                    <div className="py-1">
-                      <a
-                        href="#top"
-                        onClick={() => setMenuOpen(false)}
-                        className="block px-4 py-2.5 text-sm text-stone-600 transition hover:bg-stone-50 dark:text-stone-400 dark:hover:bg-white/5"
-                        }}
-                        className="flex w-full items-center justify-between px-4 py-2.5 text-sm text-stone-700 transition hover:bg-stone-50 dark:text-stone-300 dark:hover:bg-white/5"
-                      >
-                        <span>Appearance</span>
-                        <span className="text-xs font-semibold uppercase text-stone-400">
-                          {isDark ? "Dark" : "Light"}
-                        </span>
-                      </button>
-                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>
